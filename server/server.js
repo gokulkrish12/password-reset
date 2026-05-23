@@ -6,10 +6,6 @@ const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-// Render (and most PaaS) terminate TLS at a proxy and forward via X-Forwarded-For.
-// express-rate-limit needs trust proxy enabled to read the real client IP safely.
-app.set("trust proxy", 1);
-
 // CORS: allow the configured client origin (and any localhost during dev).
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 app.use(
