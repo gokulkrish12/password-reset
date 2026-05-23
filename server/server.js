@@ -6,6 +6,8 @@ const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // CORS: allow the configured client origin (and any localhost during dev).
 const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 app.use(
