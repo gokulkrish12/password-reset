@@ -12,16 +12,44 @@ const buildTransporter = () => {
   });
 };
 
+// Render's free tier blocks outbound SMTP (ports 25/465/587), so in production
+// we send via Brevo's HTTPS API. Locally (no BREVO_API_KEY) we still use SMTP.
+const sendViaBrevo = async ({ to, subject, html, text }) => {
+  const fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER;
+  const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify({
+      sender: { email: fromEmail, name: "Password Reset" },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      textContent: text,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Brevo API ${res.status}: ${body}`);
+  }
+  return res.json();
+};
+
 const sendEmail = async ({ to, subject, html, text }) => {
+  if (process.env.BREVO_API_KEY) {
+    return sendViaBrevo({ to, subject, html, text });
+  }
   const transporter = buildTransporter();
-  const info = await transporter.sendMail({
+  return transporter.sendMail({
     from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
     to,
     subject,
     text,
     html,
   });
-  return info;
 };
 
 const buildResetEmail = ({ name, resetUrl, expiryMinutes }) => {
