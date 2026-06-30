@@ -65,7 +65,7 @@ body {
   position: relative;
 }
 
-.input-icon i {
+.input-icon > i {
   position: absolute;
   top: 50%;
   left: 14px;
@@ -76,6 +76,7 @@ body {
 
 .input-icon .form-control {
   padding-left: 42px;
+  padding-right: 42px;
   height: 46px;
   border-radius: 10px;
 }
@@ -83,12 +84,19 @@ body {
 .toggle-pass {
   position: absolute;
   top: 50%;
-  right: 12px;
+  right: 6px;
   transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   background: transparent;
   border: 0;
   color: #6c757d;
   cursor: pointer;
+  z-index: 2;
 }
 
 .btn-brand {
